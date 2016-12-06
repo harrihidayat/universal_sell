@@ -1,0 +1,54 @@
+<?php
+
+	if(isset($_POST['id_user']))
+	{
+		include('../db/koneksi.php');
+		$cari_id_bon=$mysqli->query("select max(id_bon) as id_bon_max from db_transaksi");
+		$id_bon_max=mysqli_fetch_assoc($cari_id_bon);
+		$id_bon= $id_bon_max['id_bon_max'] + 1;
+		
+		$id_user= $_POST['id_user'];
+		
+		$ambil_chart=$mysqli->query("select * from db_add_stock_pending where id_user='$id_user'");
+		while($row=mysqli_fetch_assoc($ambil_chart))
+		{
+			$stock_lama=$mysqli->query("select * from db_barang where kode_barang='$row[kode_barang]'");
+			$barang_lama=mysqli_fetch_assoc($stock_lama);
+			
+			$stock_baru=$barang_lama['qty_barang'] + $row['qty'];
+			
+			$update_stock=$mysqli->query("update db_barang set qty_barang='$stock_baru',
+																id_user_add_stock='$id_user',harga='$row[harga]' where kode_barang='$row[kode_barang]'");
+			
+			
+				if($update_stock)
+				{
+					$tulis_transaksi=$mysqli->query("insert into db_transaksi set id_bon='$id_bon',
+																				  kode_barang='$row[kode_barang]',
+																				  nama_barang='$row[nama_barang]',
+																				  qty='$row[qty]',
+																				  harga='$row[harga]',
+																				  jenis_transaksi='2',
+																				  tanggal_transaksi=NOW(),
+																				  id_user='$id_user'");
+					if($tulis_transaksi)
+					{
+						$delete_all=$mysqli->query("delete from db_add_stock_pending where kode_barang='$row[kode_barang]' AND id_user='$id_user'") or die('cek : '.mysqli_error());
+						echo "Chart Berhasil Ditambahkan..!";
+					}
+					else
+					{
+						echo "Gagal catat Transaksi, Silahkan Hubungi Developer..!";
+					}
+					
+					
+				}
+				else
+				{
+					echo "Chart gagal Ditambahkan..!";
+				}
+		}
+		
+	}
+
+?>
