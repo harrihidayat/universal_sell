@@ -244,7 +244,7 @@ desired effect
       
     </div>
     <!-- Default to the left -->
-    <strong>Copyright &copy; 2016 <a href="#">Kote United</a>.</strong> All rights reserved.
+    <strong>Copyright &copy; 2016 <a href="#">Uni Sell</a>.</strong> All rights reserved.
   </footer>
 </div>
 <!-- ./wrapper -->
